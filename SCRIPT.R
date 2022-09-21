@@ -9,7 +9,7 @@ library(here)
 estadillo <- read_csv("datos/1_resultados_forcipula.csv")
 glimpse(estadillo)
 
-
+#comentando
 
 
 
