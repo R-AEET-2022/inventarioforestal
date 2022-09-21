@@ -6,7 +6,7 @@
 
 library (tidyverse)
 library(here)
-estadillo <- read_csv("datos/FORCIPULAS_TOTAL_H_D.csv")
+estadillo <- read_csv("datos/1_resultados_forcipula.csv")
 glimpse(estadillo)
 
 
