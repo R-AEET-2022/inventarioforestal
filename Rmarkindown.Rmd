@@ -1,0 +1,55 @@
+---
+title: "Mi primer RMarkDown"
+author: "Maria"
+date: "2022-09-21"
+output:
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![Así hemos trabajado](images/Diegoenelmuseo.jpg){width="222"}
+
+## Datos de partida
+
+Hemos partido de los datos de un inventario en el que hemos trabajado. Son datos tomados en campo en parcelas de inventario. De cada árbol se coge el diámetro, y de algunos de ellos (árboles modelo), se coge también la altura.
+
+Los datos tienen una estructura como esta:
+
+```{r datos}
+datos <- read_csv("datos/forcipula")
+summary (datos)
+```
+
+Lo primero que hacemos es seleccionar, de la tabla, los árboles modelo:
+
+```{r arbolesmodelo}
+arbolesmodelo <-  subset (datos, tipo == modelo) %>%
+                  select (Parcela, Dcm, H)
+summary(arbolesmodelo)
+```
+
+## Generamos un modelo
+
+Vamos a probar con un modelo blabla:
+
+```{r modelolinea}
+summary(iris)
+```
+
+y salen estos errores:
+
+```{r trees, echo=FALSE}
+plot(trees)
+```
+
+El error blabla nos ha salido así:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
