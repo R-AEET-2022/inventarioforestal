@@ -3,8 +3,9 @@ title: "Mi primer RMarkDown"
 author: "Maria"
 date: "2022-09-21"
 output:
-  html_document: default
+  pdf_document: default
   word_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
