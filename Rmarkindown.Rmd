@@ -37,7 +37,7 @@ Queremos conseguir un modelo para estimar la altura de los pies normales de los 
 
 Los datos de los pies modelo tienen una estructura como esta:
 
-```{r arbolesmodelo}
+```{r arbolesmodelo, echo=FALSE}
 
 ggplot(arbolesmodelo_conHo, aes(x = Dmm,     # con geom añade los puntos
                     y = h)) +
@@ -52,16 +52,18 @@ ggplot(arbolesmodelo_conHo, aes(x = Dmm,     # con geom añade los puntos
 
 ## Generamos un modelo lineal:
 
-Vamos a probar con un modelo lineal para estimar la altura a partir del diámetro:
+Vamos a empezar ajustando un modelo lineal para estimar la altura a partir del diámetro:
 
-```{r modelolinea, echo=TRUE}
+```{r modelolineal, echo=TRUE}
 
 modelolineal <- lm(h ~ Dmm, data = arbolesmodelo_conHo)
 summary (modelolineal)
 
 ```
 
-Con este modelo lineal, el ajuste se vería así:
+Como se puede ver en el summary, BLABLABLABLA que si el ajuste que si las estrellitas que si es muy mejorable
+
+El ajuste de este modelo se vería así:
 
 ```{r modelolineal_plot, echo=FALSE}
 
@@ -69,29 +71,112 @@ check_model(modelolineal)
 
 ```
 
-Con este modelo lineal, el histograma de los residuos es el siguiente:
+Y el histograma de los residuos es el siguiente:
+
 
 ```{r modelolineal_hist, echo=FALSE}
+
 hist(residuals(modelolineal))
+
 ```
 
-## Probamos con un modelo BLABLA:
+
+De los resultados concluimos que BLABLABLA
+
+
+## Ahora probamos con un GLM (Modelo Lineal Generalizado):
+
+
+Ajustamos el modelo:
+
+
+```{r GLM, echo=TRUE}
+
+glm <- glm(h ~ Dmm, data = arbolesmodelo_conHo)
+summary (glm)
+
+```
+
+
+
+Como se puede ver en el summary, BLABLABLABLA que si el ajuste que si las estrellitas que si es muy mejorable
+
+El ajuste de este modelo se vería así:
+
+
+```{r glm_plot, echo=FALSE}
+
+check_model(glm)
+
+```
+
+Con este modelo lineal, el histograma de los residuos es el siguiente:
+
+```{r glm_hist, echo=FALSE}
+
+hist(residuals(glm))
+
+```
+
 
 ## Probamos con un modelo que teníamos de agresta:
 
-y salen estos errores:
+Por útimo, vamos a probar un modelo QUE NOSABEMOS QUE COÑO ES
+
+Vamos a empezar ajustando un modelo lineal para estimar la altura a partir del diámetro:
+
 
 ```{r modeloagresta, echo=TRUE}
 
-
-# Hs <- nls(H ~ 1.3+(a+b*Ho)*exp(d/d1),data = arbolesmodelo_conHo, start = list(a=5,b=0.95,d=-10.7))
+# Hs2 <-nls(H ~ 1.3+(a+b*Ho)*exp(d/D),data=data,start=list(a=5,b=0.95,d=-10.7))
+# summary(Hs2)
+# plot(residuals(Hs2))
 
 ```
 
-El error blabla nos ha salido así:
+En este caso, BLIBLIBLIBLI Como se puede ver en el summary, BLABLABLABLA que si el ajuste que si las estrellitas que si es muy mejorable
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+El ajuste de este modelo se vería así:
+
+
+```{r modeloagresta_plot, echo=FALSE}
+
+check_model(glm)
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Con este modelo lineal, el histograma de los residuos es el siguiente:
+
+```{r modeloagresta_hist, echo=FALSE}
+
+hist(residuals(glm))
+
+```
+
+
+Por último vamos a hacer una comparación entre los tres modelos:
+
+
+```{r comparacion, echo=FALSE}
+
+
+library(performance)
+compare_performance(modelolineal, glm, modeloagresta)
+
+
+
+```
+
+El modelo blabla ajusta mas palla o mas pacá
+
+Nos quedaríamos con este, porque nos va a estimar mejor la altura de los árboles normales, de los que sólo se ha tomado en campo su diámetro.
+
+FIN
+
+
+
+
+
+
+
+
