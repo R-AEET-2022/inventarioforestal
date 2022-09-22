@@ -1,5 +1,3 @@
-
-
 ---
 title: "Mi primer RMarkDown"
 author: "Maria"
@@ -11,6 +9,22 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(ggplot2)
+library(easystats)
+
+datos <- read_csv2("datos/resultados_forcipula.csv")
+
+arbolesmodelo <-  subset (datos, tipo == "Modelo 1" | tipo == "Modelo 2") %>%
+   select (parcela, especie_nombre_ifn, Dmm = d1, h)
+
+arbolesdominantes <- subset (datos, tipo == "Dominante") %>%
+  select (parcela, Ho = h)
+
+arbolesmodelo_conHo <- arbolesmodelo %>%
+  left_join (x = arbolesmodelo, y = arbolesdominantes, by = "parcela")
+
 ```
 
 ![Así hemos trabajado](images/Diegoenelmuseo.jpg){width="222"}
@@ -19,46 +33,58 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Hemos partido de los datos de un inventario en el que hemos trabajado. Son datos tomados en campo en parcelas de inventario. De cada árbol se coge el diámetro, y de algunos de ellos (árboles modelo), se coge también la altura.
 
-Los datos tienen una estructura como esta:
+Queremos conseguir un modelo para estimar la altura de los pies normales de los que solo tenemos el diámetro. También tenemos la altura dominante de la parcela (Ho)
 
-```{r datos}
-library(tidyverse)
-datos <- read_csv2("datos/resultados_forcipula.csv")
-plot(datos$d1, datos$h)
-```
-
-Lo primero que hacemos es seleccionar, de la tabla, los árboles modelo:
+Los datos de los pies modelo tienen una estructura como esta:
 
 ```{r arbolesmodelo}
-arbolesmodelo <-  subset (datos, tipo == "Modelo 1" | tipo == "Modelo 2") %>%
-   select (parcela, especie_nombre_ifn, Dm = d1, h)
 
-arbolesdominantes <- subset (datos, tipo == "Dominante") %>%
-  select (parcela, Ho = h)
-
-arbolesmodelo_conHo <- arbolesmodelo %>%
-  left_join (x = arbolesmodelo, y = arbolesdominantes, by = "parcela")
- 
-library(ggplot2)
-ggplot(arbolesmodelo, aes(x = d1,     # con geom añade los puntos
+ggplot(arbolesmodelo_conHo, aes(x = Dmm,     # con geom añade los puntos
                     y = h)) +
-      geom_point(color = "orange")
+      geom_point(color = "orange") +
+      labs(x = "Diámetro de los pies (cm)",
+       y = "Altura (dm)",
+       title = "Datos de los pies modelo",
+       caption = "mira que chulo ha quedao")
+
 ```
 
-## Generamos un modelo
 
-Vamos a probar con un modelo blabla:
+## Generamos un modelo lineal:
 
-```{r modelolinea}
-summary(iris)
+Vamos a probar con un modelo lineal para estimar la altura a partir del diámetro:
+
+```{r modelolinea, echo=TRUE}
+
+modelolineal <- lm(h ~ Dmm, data = arbolesmodelo_conHo)
+summary (modelolineal)
+
 ```
+
+Con este modelo lineal, el ajuste se vería así:
+
+```{r modelolineal_plot, echo=FALSE}
+
+check_model(modelolineal)
+
+```
+
+Con este modelo lineal, el histograma de los residuos es el siguiente:
+
+```{r modelolineal_hist, echo=FALSE}
+hist(residuals(modelolineal))
+```
+
+## Probamos con un modelo BLABLA:
+
+## Probamos con un modelo que teníamos de agresta:
 
 y salen estos errores:
 
 ```{r modeloagresta, echo=TRUE}
 
 
-Hs <- nls(H ~ 1.3+(a+b*Ho)*exp(d/d1),data = arbolesmodelo_conHo, start = list(a=5,b=0.95,d=-10.7))
+# Hs <- nls(H ~ 1.3+(a+b*Ho)*exp(d/d1),data = arbolesmodelo_conHo, start = list(a=5,b=0.95,d=-10.7))
 
 ```
 
