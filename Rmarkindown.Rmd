@@ -1,11 +1,11 @@
 ---
-title: "Mi primer RMarkDown"
-author: "Maria"
+title: "Estimando la altura de los árboles a partir del diámetro"
+author: "Natalia y Maria"
 date: "2022-09-21"
 output:
-  pdf_document: default
-  word_document: default
   html_document: default
+  word_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -14,17 +14,41 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(ggplot2)
 library(easystats)
+library(dplyr)
 
-datos <- read_csv2("datos/resultados_forcipula.csv")
+datos <- read_csv2("datos/resultados_forcipula.csv") %>%
+  subset (especie_nombre_ifn == "Pinus pinaster") %>%
+  select (parcela, tipo, especie_nombre_ifn, Dmm = d1, h)
 
-arbolesmodelo <-  subset (datos, tipo == "Modelo 1" | tipo == "Modelo 2") %>%
-   select (parcela, especie_nombre_ifn, Dmm = d1, h)
+# Calculo de datos por parcela: Dg
+
+datos_parcela <- datos %>%
+    mutate (Gpie = pi*(Dmm/2000)^2) %>%
+    group_by (parcela) %>%
+    summarise (npiesparcela = n(),
+                Gparcela = sum(Gpie)) %>%
+    mutate(Dgmm = (Gparcela*4000/pi*npiesparcela)^0.5)
+
+
+# Seleccionamos el árbol dominante de cada parcela
 
 arbolesdominantes <- subset (datos, tipo == "Dominante") %>%
   select (parcela, Ho = h)
 
+# Llevamos el valor de Ho de cada parcela, a los árboles modelo
+
 arbolesmodelo_conHo <- arbolesmodelo %>%
   left_join (x = arbolesmodelo, y = arbolesdominantes, by = "parcela")
+
+# y ahora llevamos el Dg tb a los arboles modelo
+
+arbolesmodelo_conHoyDg <- arbolesmodelo_conHo %>%
+  left_join (x = arbolesmodelo_conHo, y = datos_parcela, by = "parcela")
+
+
+# Separamos los árboles modelo
+
+arbolesmodelo <-  subset (datos, tipo == "Modelo 1" | tipo == "Modelo 2") 
 
 ```
 
@@ -57,13 +81,15 @@ Vamos a empezar ajustando un modelo lineal para estimar la altura a partir del d
 
 ```{r modelolineal, echo=TRUE}
 
-modelolineal <- lm(h ~ Dmm, data = arbolesmodelo_conHo)
+modelolineal <- lm(h ~ Dmm, data = arbolesmodelo_conHoyDg)
 summary (modelolineal)
 
 ```
 
 
-Como se puede ver en el summary, BLABLABLABLA que si el ajuste que si las estrellitas que si es muy mejorable
+Como se puede ver en el summary, la distribución de los residuos no está centrada en 0, ni los cuartiles son proporcionados, con lo que se cumplen las asunciones del modelo lineal.
+
+Además, con un intercept de 30, el error estandar de 6 es muy alto, aunque el p-valor sale muy bajo y resulta significativo.
 
 El ajuste de este modelo se vería así:
 
@@ -75,7 +101,6 @@ check_model(modelolineal)
 
 Y el histograma de los residuos es el siguiente:
 
-
 ```{r modelolineal_hist, echo=FALSE}
 
 hist(residuals(modelolineal))
@@ -83,7 +108,7 @@ hist(residuals(modelolineal))
 ```
 
 
-De los resultados concluimos que BLABLABLA
+De los resultados concluimos que este modelo no se ajusta bien a nuestros datos.
 
 
 ## Ahora probamos con un GLM (Modelo Lineal Generalizado):
@@ -94,7 +119,7 @@ Ajustamos el modelo:
 
 ```{r GLM, echo=TRUE}
 
-glm <- glm(h ~ Dmm, data = arbolesmodelo_conHo)
+glm <- glm(h ~ Dmm, data = arbolesmodelo_conHo, family = )
 summary (glm)
 
 ```
@@ -130,9 +155,10 @@ Vamos a empezar ajustando un modelo lineal para estimar la altura a partir del d
 
 ```{r modeloagresta, echo=TRUE}
 
-# Hs2 <-nls(H ~ 1.3+(a+b*Ho)*exp(d/D),data=data,start=list(a=5,b=0.95,d=-10.7))
-# summary(Hs2)
-# plot(residuals(Hs2))
+modeloagresta <- nls(h ~ exp(a+(b/Dmm)), data = arbolesmodelo_conHoyDg, start = list(a=3,b=-15))
+summary(modeloagresta)
+plot(residuals(modeloagresta))
+
 
 ```
 
@@ -167,7 +193,6 @@ library(performance)
 #compare_performance(modelolineal, glm, modeloagresta)
 
 
-
 ```
 
 El modelo blabla ajusta mas palla o mas pacá
@@ -175,6 +200,17 @@ El modelo blabla ajusta mas palla o mas pacá
 ## Conclusiones
 
 Nos quedaríamos con este, porque nos va a estimar mejor la altura de los árboles normales, de los que sólo se ha tomado en campo su diámetro.
+
+## Estimación de la altura de los pies normales
+
+```{r estimacion}
+
+datos_H <- datos %>%
+  mutate (h_estim = predict(            ))
+  
+```
+
+
 
 FIN
 
