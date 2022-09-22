@@ -61,6 +61,7 @@ summary (modelolineal)
 
 ```
 
+
 Como se puede ver en el summary, BLABLABLABLA que si el ajuste que si las estrellitas que si es muy mejorable
 
 El ajuste de este modelo se vería así:
@@ -153,6 +154,7 @@ hist(residuals(glm))
 
 ```
 
+## Comparación de modelos
 
 Por último vamos a hacer una comparación entre los tres modelos:
 
@@ -161,13 +163,15 @@ Por último vamos a hacer una comparación entre los tres modelos:
 
 
 library(performance)
-compare_performance(modelolineal, glm, modeloagresta)
+#compare_performance(modelolineal, glm, modeloagresta)
 
 
 
 ```
 
 El modelo blabla ajusta mas palla o mas pacá
+
+## Conclusiones
 
 Nos quedaríamos con este, porque nos va a estimar mejor la altura de los árboles normales, de los que sólo se ha tomado en campo su diámetro.
 
